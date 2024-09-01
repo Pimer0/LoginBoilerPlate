@@ -1,0 +1,6 @@
+﻿services:
+  loginboilerplate:
+    image: loginboilerplate
+    build:
+      context: .
+      dockerfile: LoginBoilerPlate/Dockerfile
