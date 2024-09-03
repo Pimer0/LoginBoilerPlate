@@ -1,20 +1,28 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+
 namespace LoginBoilerPlate.Services;
 
 public class EFcoreUserService : IUserService
 {
     private readonly PostgresContext _context;
-    public Task<List<User>> GetAll(
-         CancellationToken token)
+    
+    private readonly IMapper _mapper;
+    
+    public EFcoreUserService(PostgresContext context, IMapper mapper)
     {
-        throw new NotImplementedException();
+        _context = context;
+        _mapper = mapper;
     }
 
-    public Task<User?> GetById(Guid id)
+    //TODO: Utiliser le token JWT pour la connexion
+    public async Task<User?> Login(string mail, string motDePasse)
     {
-        throw new NotImplementedException();
+        return await _context.Users.FirstOrDefaultAsync(u => u.Mail == mail && u.MotDePasse == motDePasse);
     }
+    
 
-    public async Task<User> Add(UserInput user)
+    public async Task<UserOutput> Add(UserInput user)
     {
         var entityEntry = new User
         {
@@ -25,16 +33,7 @@ public class EFcoreUserService : IUserService
         };
         _context.Users.Add(entityEntry);
         await _context.SaveChangesAsync();
-        return entityEntry;
+        return _mapper.Map<UserOutput>(entityEntry);
     }
-
-    public Task<bool> Update(Guid id, User user)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> Delete(Guid id)
-    {
-        throw new NotImplementedException();
-    }
+    
 }
